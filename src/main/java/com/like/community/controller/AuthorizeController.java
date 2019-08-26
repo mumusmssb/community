@@ -43,7 +43,7 @@ public class AuthorizeController {
         accessToKenDTO.setState(state);
         String accessToKen = gitHubProvider.getAccessToKen(accessToKenDTO);
         GitHubUser githubUser = gitHubProvider.getGitHubUser(accessToKen);
-        if (githubUser != null){
+        if (githubUser != null && githubUser.getId() != null){
             //登录成功  写入cookie 和 session
             User user = new User();
             String token = UUID.randomUUID().toString();
@@ -52,6 +52,8 @@ public class AuthorizeController {
             user.setAccountId(String.valueOf(githubUser.getId()));
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
+            user.setBio(githubUser.getBio());
+            user.setAvatarUrl(githubUser.getAvatarUrl());
             userMapper.insert(user);
             response.addCookie(new Cookie("token",token));
 //            request.getSession().setAttribute("user",githubUser);
